@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<property name="LOGS" value="/var/log/services" />
+	<include
+		resource="org/springframework/boot/logging/logback/defaults.xml" />
+
+	<appender name="Console"
+		class="ch.qos.logback.core.ConsoleAppender">
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<pattern>${CONSOLE_LOG_PATTERN}</pattern>
+		</layout>
+	</appender>
+
+	<appender name="RollingFile"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOGS}/Notificator.log</file>
+		<encoder
+			class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<Pattern>%d{dd-MMM-yyyy HH:mm:ss} [NOTIFICATOR] %p: %c{1} - %m%n</Pattern>
+		</encoder>
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- rollover daily and when the file reaches 150 MegaBytes -->
+			<fileNamePattern>${LOGS}/archived/notificator-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy
+				class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>150MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>
+	</appender>
+
+	<!-- Configurar nivel de log general a INFO y redirigir solo al archivo (sin consola) -->
+	<root level="info">
+		<appender-ref ref="RollingFile" />
+	</root>
+ 
+	<!-- Configurar clases de la aplicación a DEBUG para trazabilidad detallada -->
+	<logger name="com.axtel.automated.notification" level="debug" additivity="false">
+		<appender-ref ref="RollingFile" />
+	</logger>
+
+</configuration>
